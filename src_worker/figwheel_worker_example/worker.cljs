@@ -1,8 +1,17 @@
-(ns figwheel-worker-example.worker)
+(ns figwheel-worker-example.worker
+  (:require [cljs-workers.worker :as worker]))
 
 (enable-console-print!)
 
-(print "I'm a worker!")
+(defonce build (atom 0))
 
-(defn on-js-reload []
-  (print "on-js-reload called!"))
+(worker/register
+ :mirror
+ (fn [arguments]
+   (assoc arguments
+          :worker "I am alive!"
+          :build @build)))
+
+(worker/bootstrap)
+(swap! build inc)
+(print "I'm a worker and I got bootstrapped!")
